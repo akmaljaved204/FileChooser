@@ -13,6 +13,13 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 
+import android.util.Base64;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import org.json.JSONObject;
+
 public class FileChooser extends CordovaPlugin {
 
     private static final String TAG = "FileChooser";
@@ -61,7 +68,15 @@ public class FileChooser extends CordovaPlugin {
                 if (uri != null) {
 
                     Log.w(TAG, uri.toString());
-                    callback.success(getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri));
+					
+					try {
+					JSONObject obj = new JSONObject();
+					obj.put("path", getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri));
+					obj.put("fileData", encodeFileToBase64Binary(getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri)));
+                    callback.success( obj.toString());
+					} catch (Exception e) {
+						callback.error("File uri was null");
+					}
 
                 } else {
 
@@ -95,4 +110,32 @@ public class FileChooser extends CordovaPlugin {
 		    }
 		  }
 		}
+		
+		private String encodeFileToBase64Binary(String fileName) throws IOException {
+		File file = new File(fileName);
+		byte[] bytes = loadFile(file);
+		byte[] encoded = Base64.encode(bytes, Base64.DEFAULT);
+		String encodedString = new String(encoded);
+		return encodedString;
+	}
+	private byte[] loadFile(File file) throws IOException {
+	    InputStream is = new FileInputStream(file);
+	    long length = file.length();
+	    if (length > Integer.MAX_VALUE) {
+	        // File is too large
+	    }
+	    byte[] bytes = new byte[(int)length];
+	    int offset = 0;
+	    int numRead = 0;
+	    while (offset < bytes.length
+	           && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+	        offset += numRead;
+	    }
+	    if (offset < bytes.length) {
+	        throw new IOException("Could not completely read file "+file.getName());
+	    }
+ 
+	    is.close();
+	    return bytes;
+	}
 }
