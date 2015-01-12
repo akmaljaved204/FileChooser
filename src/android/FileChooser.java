@@ -40,15 +40,26 @@ public class FileChooser extends CordovaPlugin {
 
     public void chooseFile(CallbackContext callbackContext) {
 
-        // type and title should be configurable
-
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-
-        Intent chooser = Intent.createChooser(intent, "Select File");
-        cordova.startActivityForResult(this, chooser, PICK_FILE_REQUEST);
+        // type and title should be configurable		
+		
+		if (Build.VERSION.SDK_INT <19){
+			//Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+			//intent.setType("*/*");
+			//intent.addCategory(Intent.CATEGORY_OPENABLE);
+			//intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+			//Intent chooser = Intent.createChooser(intent, "Select File");
+			//cordova.startActivityForResult(this, chooser, PICK_FILE_REQUEST);
+			
+			Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+			intent.addCategory(Intent.CATEGORY_OPENABLE);
+			intent.setType("*/*");
+			startActivityForResult(intent, PICK_FILE_REQUEST);
+		} else {
+			Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+			intent.addCategory(Intent.CATEGORY_OPENABLE);
+			intent.setType("*/*");
+			startActivityForResult(intent, PICK_FILE_REQUEST);
+		}
 
         PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
         pluginResult.setKeepCallback(true);
