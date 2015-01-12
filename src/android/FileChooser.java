@@ -14,6 +14,7 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 
 import android.util.Base64;
+import android.os.Build;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
