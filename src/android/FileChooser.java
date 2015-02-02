@@ -56,11 +56,17 @@ public class FileChooser extends CordovaPlugin {
 			//intent.setType("*/*");
 			//this.cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
 			
-			Intent intent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
-			intent.putExtra("CONTENT_TYPE", "*/*");
-			intent.addCategory(Intent.CATEGORY_DEFAULT);
-			this.cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
+			//Intent intent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
+			//intent.putExtra("CONTENT_TYPE", "*/*");
+			//intent.addCategory(Intent.CATEGORY_DEFAULT);
+			//this.cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
 			
+			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+			intent.setType("*/*");
+			intent.addCategory(Intent.CATEGORY_OPENABLE);
+			intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+			Intent chooser = Intent.createChooser(intent, "Select File");
+			this.cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
 			
 		//} else {
 		//	Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
