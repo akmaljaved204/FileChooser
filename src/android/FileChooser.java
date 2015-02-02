@@ -41,40 +41,17 @@ public class FileChooser extends CordovaPlugin {
 
     public void chooseFile(CallbackContext callbackContext) {
 
-        // type and title should be configurable		
+        
+			
+		 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        Intent chooser = Intent.createChooser(intent, "Select File");
 		
-		//if (Build.VERSION.SDK_INT <19){
-		//	Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-		//	intent.setType("*/*");
-		//	intent.addCategory(Intent.CATEGORY_OPENABLE);
-		//	intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-		//	Intent chooser = Intent.createChooser(intent, "Select File");
-		//	cordova.startActivityForResult(this, chooser, PICK_FILE_REQUEST);
-			
-			//Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-			//intent.addCategory(Intent.CATEGORY_OPENABLE);
-			//intent.setType("*/*");
-			//this.cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
-			
-			//Intent intent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
-			//intent.putExtra("CONTENT_TYPE", "*/*");
-			//intent.addCategory(Intent.CATEGORY_DEFAULT);
-			//this.cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
-			
-			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-			intent.setType("*/*");
-			intent.addCategory(Intent.CATEGORY_OPENABLE);
-			intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-			Intent chooser = Intent.createChooser(intent, "Select File");
-			this.cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
-			
-		//} else {
-		//	Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-		//	intent.addCategory(Intent.CATEGORY_OPENABLE);
-		///	intent.setType("*/*");
-	///		this.cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
-		//}
+        cordova.startActivityForResult(this, chooser, PICK_FILE_REQUEST);
 
+		
         PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
         pluginResult.setKeepCallback(true);
         callback = callbackContext;
