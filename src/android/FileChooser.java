@@ -45,13 +45,13 @@ public class FileChooser extends CordovaPlugin {
 		if (Build.VERSION.SDK_INT < 19){			
 			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 			intent.setType("file/*");
-			cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
+			Cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
 		} else {
 			Toast.makeText(this.cordova.getActivity().getApplicationContext(),"PICK_FILE_REQUEST",Toast.LENGTH_SHORT).show();
 			Intent intent = new Intent(Intent.ACTION_GET_CONTENT); 
 			intent.setType("*/*"); 
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
-			this.cordova.getActivity().startActivityForResult(Intent.createChooser(intent, "Select a File "),PICK_FILE_REQUEST);
+			this.Cordova.getActivity().startActivityForResult(Intent.createChooser(intent, "Select a File "),PICK_FILE_REQUEST);
 		}
 		
         PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
@@ -59,7 +59,19 @@ public class FileChooser extends CordovaPlugin {
         callback = callbackContext;
         callbackContext.sendPluginResult(pluginResult);
     }
-
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Toast.makeText(this.cordova.getActivity().getApplicationContext(),"onActivityResult",Toast.LENGTH_SHORT).show();
+	  if (requestCode == PICK_FILE_REQUEST ) {
+		  
+	     if (resultCode == this.cordova.getActivity().RESULT_OK) {
+	    	 System.out.println("File Path  ="+data.getData());
+	     }
+	  }
+	}
+	
+	/*
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Toast.makeText(this.cordova.getActivity().getApplicationContext(),"onActivityResult",Toast.LENGTH_SHORT).show();
@@ -100,7 +112,7 @@ public class FileChooser extends CordovaPlugin {
         }else{
 		Toast.makeText(this.cordova.getActivity().getApplicationContext(),"requestCode != PICK_FILE_REQUEST && callback == null",Toast.LENGTH_SHORT).show();
 		}
-    }
+    }*/
 	public String getRealPathFromURI(Context context, Uri contentUri) {
 		  Cursor cursor = null;
 		  try { 
