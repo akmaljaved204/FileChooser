@@ -11,6 +11,18 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 
+
+import android.content.Context;
+import android.database.Cursor;
+import android.provider.MediaStore;
+
+import android.util.Base64;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import org.json.JSONObject;
+
 public class FileChooser extends CordovaPlugin {
 
     private static final String TAG = "FileChooser";
@@ -39,7 +51,6 @@ public class FileChooser extends CordovaPlugin {
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
         Intent chooser = Intent.createChooser(intent, "Select File");
         cordova.startActivityForResult(this, chooser, PICK_FILE_REQUEST);
-
         PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
         pluginResult.setKeepCallback(true);
         callback = callbackContext;
@@ -67,7 +78,6 @@ public class FileChooser extends CordovaPlugin {
                 }
 
             } else if (resultCode == Activity.RESULT_CANCELED) {
-
                 // TODO NO_RESULT or error callback?
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
                 callback.sendPluginResult(pluginResult);
@@ -78,4 +88,49 @@ public class FileChooser extends CordovaPlugin {
             }
         }
     }
+	
+	public String getRealPathFromURI(Context context, Uri contentUri) {
+		  Cursor cursor = null;
+		  try { 
+		    String[] proj = { MediaStore.Images.Media.DATA };
+		    cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+		    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		    cursor.moveToFirst();
+		    return cursor.getString(column_index);
+		  } finally {
+		    if (cursor != null) {
+		      cursor.close();
+		    }
+		  }
+		}
+		
+		private String encodeFileToBase64Binary(String fileName) throws IOException {
+			File file = new File(fileName);
+			byte[] bytes = loadFile(file);
+			byte[] encoded = Base64.encode(bytes, Base64.DEFAULT);
+			String encodedString = new String(encoded);
+			return encodedString;
+		}
+		private byte[] loadFile(File file) throws IOException {
+			InputStream is = new FileInputStream(file);
+			long length = file.length();
+			if (length > Integer.MAX_VALUE) {
+				// File is too large
+			}
+			byte[] bytes = new byte[(int)length];
+			int offset = 0;
+			int numRead = 0;
+			while (offset < bytes.length
+				   && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+				offset += numRead;
+			}
+			if (offset < bytes.length) {
+				throw new IOException("Could not completely read file "+file.getName());
+			}
+	 
+			is.close();
+			return bytes;
+		}
+	
+	
 }
