@@ -57,6 +57,7 @@ public class FileChooser extends CordovaPlugin {
 			Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
 			intent.setType("*/*");
+			intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
 			cordova.startActivityForResult(this, intent, PICK_FILE_REQUEST);
 		}
 		
