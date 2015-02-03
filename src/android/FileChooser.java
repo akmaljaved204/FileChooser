@@ -73,7 +73,7 @@ public class FileChooser extends CordovaPlugin {
 					JSONObject obj = new JSONObject();
 					obj.put("path",uri);
 					//obj.put("path",uri);
-					obj.put("fileData", encodeFileToBase64Binary(uri.toString));
+					obj.put("fileData", encodeFileToBase64Binary(uri.toString()));
                     callback.success(obj.toString());
 				} catch (Exception e) {
 					callback.error("Exception on create file data");
