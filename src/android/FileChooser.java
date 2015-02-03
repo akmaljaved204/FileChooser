@@ -13,6 +13,7 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 
+import android.widget.Toast;
 import android.util.Base64;
 import android.os.Build;
 import java.io.File;
@@ -41,17 +42,13 @@ public class FileChooser extends CordovaPlugin {
 
     public void chooseFile(CallbackContext callbackContext) {
 	
-				
-		Intent intent;
-		if (Build.VERSION.SDK_INT < 19){
-			intent = new Intent();
-			intent.setAction(Intent.ACTION_GET_CONTENT);
-			intent.setType("*/*");
+		if (Build.VERSION.SDK_INT < 19){			
+			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+			intent.setType("file/*");
 			cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
 		} else {
-			intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-			intent.addCategory(Intent.CATEGORY_OPENABLE);
-			intent.setType("*/*");
+			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+			intent.setType("file/*");
 			this.cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
 		}
 		
@@ -63,7 +60,7 @@ public class FileChooser extends CordovaPlugin {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		System.out.println("onActivityResult");
+		Toast.makeText(cordova.this,"onActivityResult",Toast.LENGTH_SHORT).show();
         if (requestCode == PICK_FILE_REQUEST && callback != null) {
 
             if (resultCode == Activity.RESULT_OK) {
@@ -71,15 +68,13 @@ public class FileChooser extends CordovaPlugin {
                 Uri uri = data.getData();
 
                 if (uri != null) {
-
                     Log.w(TAG, uri.toString());
-					
 					try {
-					String filePath=getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri);
-					JSONObject obj = new JSONObject();
-					obj.put("path",filePath );
-					obj.put("fileData", encodeFileToBase64Binary(filePath));
-                    callback.success( obj.toString());
+						String filePath=getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri);
+						JSONObject obj = new JSONObject();
+						obj.put("path",filePath );
+						obj.put("fileData", encodeFileToBase64Binary(filePath));
+						callback.success( obj.toString());
 					} catch (Exception e) {
 						callback.error("File uri was null");
 					}
@@ -101,7 +96,7 @@ public class FileChooser extends CordovaPlugin {
                 callback.error(resultCode);
             }
         }else{
-			System.out.println("requestCode != PICK_FILE_REQUEST && callback == null");
+		Toast.makeText(cordova.this,"requestCode != PICK_FILE_REQUEST && callback == null",Toast.LENGTH_SHORT).show();
 		}
     }
 	public String getRealPathFromURI(Context context, Uri contentUri) {
