@@ -75,7 +75,7 @@ public class FileChooser extends CordovaPlugin {
 					obj.put("fileData", encodeFileToBase64Binary(filePath));
                     callback.success(obj.toString());
 				} catch (Exception e) {
-					callback.error("File uri was null");
+					callback.error("Exception on create file data");
 				}
                 } else {
                     callback.error("File uri was null");
