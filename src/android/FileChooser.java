@@ -46,7 +46,7 @@ public class FileChooser extends CordovaPlugin {
         // type and title should be configurable
 		
 		
-		if(){
+		if(Build.VERSION.SDK_INT < 19){
 			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 			intent.setType("*/*");
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
