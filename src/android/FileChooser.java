@@ -15,7 +15,7 @@ import org.json.JSONException;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
-
+import android.os.Build;
 import android.util.Base64;
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,11 +69,14 @@ public class FileChooser extends CordovaPlugin {
                 if (uri != null) {
 				try {
                     Log.w(TAG, uri.toString());
+					if (Build.VERSION.SDK_INT < 19){
+						filePath=getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri);
+					}
 					//String filePath=getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri);
 					JSONObject obj = new JSONObject();
 					obj.put("path",filePath);
-					obj.put("uri",uri);
-					//obj.put("fileData", encodeFileToBase64Binary(filePath));
+					//obj.put("uri",uri);
+					obj.put("fileData", encodeFileToBase64Binary(filePath));
                     callback.success(obj.toString());
 				} catch (Exception e) {
 					callback.error("Exception on create file data");
