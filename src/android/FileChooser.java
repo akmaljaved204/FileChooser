@@ -67,14 +67,14 @@ public class FileChooser extends CordovaPlugin {
                 Uri uri = data.getData();
 
                 if (uri != null) {
-
                     Log.w(TAG, uri.toString());
-                    callback.success(uri.toString());
-
+					String filePath=getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri);
+					JSONObject obj = new JSONObject();
+					obj.put("path",filePath );
+					obj.put("fileData", encodeFileToBase64Binary(filePath));
+                    callback.success(obj.toString());
                 } else {
-
                     callback.error("File uri was null");
-
                 }
 
             } else if (resultCode == Activity.RESULT_CANCELED) {
