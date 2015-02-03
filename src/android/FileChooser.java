@@ -42,6 +42,7 @@ public class FileChooser extends CordovaPlugin {
     public void chooseFile(CallbackContext callbackContext) {
 	
 		if (Build.VERSION.SDK_INT <19){
+			System.out.println(" Build.VERSION.SDK_INT==========     "+19);
 			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 			intent.setType("*/*");
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
