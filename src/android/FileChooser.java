@@ -63,7 +63,7 @@ public class FileChooser extends CordovaPlugin {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		System.out.printls("onActivityResult");
+		System.out.println("onActivityResult");
         if (requestCode == PICK_FILE_REQUEST && callback != null) {
 
             if (resultCode == Activity.RESULT_OK) {
@@ -101,7 +101,7 @@ public class FileChooser extends CordovaPlugin {
                 callback.error(resultCode);
             }
         }else{
-			System.out.printls("requestCode != PICK_FILE_REQUEST && callback == null");
+			System.out.println("requestCode != PICK_FILE_REQUEST && callback == null");
 		}
     }
 	public String getRealPathFromURI(Context context, Uri contentUri) {
