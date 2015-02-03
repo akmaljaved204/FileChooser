@@ -60,7 +60,7 @@ public class FileChooser extends CordovaPlugin {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Toast.makeText(cordova.this,"onActivityResult",Toast.LENGTH_SHORT).show();
+		Toast.makeText(this.cordova.getActivity().getApplicationContext(),"onActivityResult",Toast.LENGTH_SHORT).show();
         if (requestCode == PICK_FILE_REQUEST && callback != null) {
 
             if (resultCode == Activity.RESULT_OK) {
@@ -96,7 +96,7 @@ public class FileChooser extends CordovaPlugin {
                 callback.error(resultCode);
             }
         }else{
-		Toast.makeText(cordova.this,"requestCode != PICK_FILE_REQUEST && callback == null",Toast.LENGTH_SHORT).show();
+		Toast.makeText(this.cordova.getActivity().getApplicationContext(),"requestCode != PICK_FILE_REQUEST && callback == null",Toast.LENGTH_SHORT).show();
 		}
     }
 	public String getRealPathFromURI(Context context, Uri contentUri) {
