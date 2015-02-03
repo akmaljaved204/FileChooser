@@ -65,11 +65,11 @@ public class FileChooser extends CordovaPlugin {
             if (resultCode == Activity.RESULT_OK) {
 
                 Uri uri = data.getData();
-
+				String filePath=uri.getPath();
                 if (uri != null) {
 				try {
                     Log.w(TAG, uri.toString());
-					String filePath=getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri);
+					//String filePath=getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri);
 					JSONObject obj = new JSONObject();
 					obj.put("path",filePath);
 					obj.put("uri",uri);
