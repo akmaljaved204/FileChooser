@@ -59,7 +59,7 @@ public class FileChooser extends CordovaPlugin {
 	
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Toast.makeText(this.cordova.getActivity().getApplicationContext(),"onActivityResult",Toast.LENGTH_SHORT).show();
+			callback.success( data.getData().getPath().toString());
         if (requestCode == PICK_FILE_REQUEST && callback != null) {
 
             if (resultCode == Activity.RESULT_OK) {
@@ -85,23 +85,17 @@ public class FileChooser extends CordovaPlugin {
 					}
 
                 } else {
-
                     callback.error("You can not select this file ");
-
                 }
 
             } else if (resultCode == Activity.RESULT_CANCELED) {
-
-                // TODO NO_RESULT or error callback?
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
                 callback.sendPluginResult(pluginResult);
-
             } else {
-
                 callback.error(resultCode);
             }
         }else{
-		Toast.makeText(this.cordova.getActivity().getApplicationContext(),"requestCode != PICK_FILE_REQUEST && callback == null",Toast.LENGTH_SHORT).show();
+		
 		}
     }
 	/*public String getRealPathFromURI(Context context, Uri contentUri) {
