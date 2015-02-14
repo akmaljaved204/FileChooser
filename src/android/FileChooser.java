@@ -70,7 +70,7 @@ public class FileChooser extends CordovaPlugin {
                 if (uri != null) {
 				
 					try{
-					String filePath=getRealPathFromURI(cordova.getContext(),uri);
+					String filePath=getRealPathFromURI(uri);
 					JSONObject obj = new JSONObject();
 					obj.put("path",filePath );
 					obj.put("fileData", encodeFileToBase64Binary(filePath));
@@ -97,14 +97,14 @@ public class FileChooser extends CordovaPlugin {
             }
         }
     }
-	public String getRealPathFromURI (Context context ,Uri contentUri)throws Exception
+	public String getRealPathFromURI (Uri contentUri)throws Exception
 	{
 	     String path = null;
 	     String[] proj = { MediaStore.MediaColumns.DATA };
 
 	        if("content".equalsIgnoreCase(contentUri.getScheme ()))
 	            {
-	                Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+	                Cursor cursor = cordova.getActivity().getContentResolver().query(contentUri, proj, null, null, null);
 	                if (cursor.moveToFirst()) {
 	                    int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 	                    path = cursor.getString(column_index);
