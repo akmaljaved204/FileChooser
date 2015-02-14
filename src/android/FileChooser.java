@@ -114,14 +114,14 @@ public class FileChooser extends CordovaPlugin {
 		}*/
 		
 		
-	public String getRealPathFromURI (Uri contentUri)throws Exception
+	public String getRealPathFromURI (Context context ,Uri contentUri)throws Exception
 	{
 	     String path = null;
 	     String[] proj = { MediaStore.MediaColumns.DATA };
 
 	        if("content".equalsIgnoreCase(contentUri.getScheme ()))
 	            {
-	                Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+	                Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
 	                if (cursor.moveToFirst()) {
 	                    int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 	                    path = cursor.getString(column_index);
