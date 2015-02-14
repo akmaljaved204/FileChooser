@@ -42,16 +42,13 @@ public class FileChooser extends CordovaPlugin {
 
     public void chooseFile(CallbackContext callbackContext) {
 	
-		if (Build.VERSION.SDK_INT < 19){			
-			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-			intent.setType("*/*");
-			this.cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
-		} else {
-			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-			    intent.setType("*/*");
-			    intent.addCategory(Intent.CATEGORY_OPENABLE);
-			this.cordova.getActivity().startActivityForResult(Intent.createChooser(intent, "Select a File "),PICK_FILE_REQUEST);
-		}
+		Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+		i.setType("*/*");
+		i.addCategory(Intent.CATEGORY_OPENABLE);
+		i = Intent.createChooser(i, "Choose a file"); 
+		this.cordova.getActivity().startActivityForResult(i, PICK_FILE_REQUEST);
+	
+	
 		
         PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
         pluginResult.setKeepCallback(true);
@@ -101,7 +98,7 @@ public class FileChooser extends CordovaPlugin {
 		Toast.makeText(this.cordova.getActivity().getApplicationContext(),"requestCode != PICK_FILE_REQUEST && callback == null",Toast.LENGTH_SHORT).show();
 		}
     }
-	public String getRealPathFromURI(Context context, Uri contentUri) {
+	/*public String getRealPathFromURI(Context context, Uri contentUri) {
 		  Cursor cursor = null;
 		  try { 
 		    String[] proj = { MediaStore.Images.Media.DATA };
@@ -114,9 +111,32 @@ public class FileChooser extends CordovaPlugin {
 		      cursor.close();
 		    }
 		  }
-		}
+		}*/
 		
-		private String encodeFileToBase64Binary(String fileName) throws IOException {
+		
+	public String getRealPathFromURI (Uri contentUri)throws Exception
+	{
+	     String path = null;
+	     String[] proj = { MediaStore.MediaColumns.DATA };
+
+	        if("content".equalsIgnoreCase(contentUri.getScheme ()))
+	            {
+	                Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+	                if (cursor.moveToFirst()) {
+	                    int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+	                    path = cursor.getString(column_index);
+	                }
+	                cursor.close();
+	                return path;
+	            }
+	            else if("file".equalsIgnoreCase(contentUri.getScheme()))
+	            {
+	                return contentUri.getPath();
+	            }
+	            return null;
+	}
+		
+	private String encodeFileToBase64Binary(String fileName) throws IOException {
 		File file = new File(fileName);
 		byte[] bytes = loadFile(file);
 		byte[] encoded = Base64.encode(bytes, Base64.DEFAULT);
