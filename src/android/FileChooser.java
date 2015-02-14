@@ -42,11 +42,11 @@ public class FileChooser extends CordovaPlugin {
 
     public void chooseFile(CallbackContext callbackContext) {
 	
-		Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-		i.setType("*/*");
-		i.addCategory(Intent.CATEGORY_OPENABLE);
-		i = Intent.createChooser(i, "Choose a file"); 
-		this.cordova.getActivity().startActivityForResult(i, PICK_FILE_REQUEST);
+		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+		intent.setType("*/*");
+		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		intent = Intent.createChooser(intent, "Choose a file"); 
+		this.cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
 	
 	
 		
@@ -69,11 +69,17 @@ public class FileChooser extends CordovaPlugin {
                 if (uri != null) {
                     Log.w(TAG, uri.toString());
 					try {
-						String filePath=getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri);
+					
 						JSONObject obj = new JSONObject();
-						obj.put("path",filePath );
-						obj.put("fileData", encodeFileToBase64Binary(filePath));
+						obj.put("path",uri );
+						//obj.put("fileData", encodeFileToBase64Binary(filePath));
 						callback.success( obj.toString());
+					
+						//String filePath=getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri);
+						//JSONObject obj = new JSONObject();
+						//obj.put("path",filePath );
+						//obj.put("fileData", encodeFileToBase64Binary(filePath));
+						//callback.success( obj.toString());
 					} catch (Exception e) {
 						callback.error("You can not select this file ");
 					}
