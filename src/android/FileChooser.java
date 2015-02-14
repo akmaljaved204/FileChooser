@@ -19,6 +19,7 @@ import android.content.Context;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.database.Cursor;
+import org.json.JSONObject;
 
 
 public class FileChooser extends CordovaPlugin {
@@ -67,9 +68,12 @@ public class FileChooser extends CordovaPlugin {
                 Uri uri = data.getData();
 
                 if (uri != null) {
-
-                    Log.w(TAG, uri.toString());
-                    callback.success(uri.toString());
+				
+                    String filePath=getRealPathFromURI(this.getApplicationContext(),uri);
+					JSONObject obj = new JSONObject();
+					obj.put("path",filePath );
+					obj.put("fileData", encodeFileToBase64Binary(filePath));
+					callback.success(uri.toString());
 
                 } else {
 
