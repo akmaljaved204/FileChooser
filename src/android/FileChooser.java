@@ -4,19 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
-
+import android.database.Cursor;
+import android.provider.MediaStore;
+import android.content.Context;
 import org.apache.cordova.CordovaArgs;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 
-
-import android.content.Context;
-import android.database.Cursor;
-import android.provider.MediaStore;
-import android.os.Build;
+import android.widget.Toast;
 import android.util.Base64;
+import android.os.Build;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,61 +41,54 @@ public class FileChooser extends CordovaPlugin {
     }
 
     public void chooseFile(CallbackContext callbackContext) {
-
-        // type and title should be configurable
-		
-		
-		if(Build.VERSION.SDK_INT < 19){
+	
+		if (Build.VERSION.SDK_INT < 19){			
 			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 			intent.setType("*/*");
-			intent.addCategory(Intent.CATEGORY_OPENABLE);
-			intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-			Intent chooser = Intent.createChooser(intent, "Select File");
-			cordova.startActivityForResult(this, chooser, PICK_FILE_REQUEST);
-		}else{
-			Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-			intent.addCategory(Intent.CATEGORY_OPENABLE);
-			intent.setType("*/*");
-			intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-			cordova.startActivityForResult(this, intent, PICK_FILE_REQUEST);
+			this.cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
+		} else {
+			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+			    intent.setType("*/*");
+			    intent.addCategory(Intent.CATEGORY_OPENABLE);
+			this.cordova.getActivity().startActivityForResult(Intent.createChooser(intent, "Select a File "),PICK_FILE_REQUEST);
 		}
 		
-
-       
         PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
         pluginResult.setKeepCallback(true);
         callback = callbackContext;
         callbackContext.sendPluginResult(pluginResult);
-    }
-
+    }	
+	
+	
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+		Toast.makeText(this.cordova.getActivity().getApplicationContext(),"onActivityResult",Toast.LENGTH_SHORT).show();
         if (requestCode == PICK_FILE_REQUEST && callback != null) {
 
             if (resultCode == Activity.RESULT_OK) {
 
                 Uri uri = data.getData();
-				String filePath=uri.getPath();
+
                 if (uri != null) {
-				try {
                     Log.w(TAG, uri.toString());
-					if (Build.VERSION.SDK_INT < 19){
-						filePath=getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri);
+					try {
+						String filePath=getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri);
+						JSONObject obj = new JSONObject();
+						obj.put("path",filePath );
+						obj.put("fileData", encodeFileToBase64Binary(filePath));
+						callback.success( obj.toString());
+					} catch (Exception e) {
+						callback.error("You can not select this file ");
 					}
-					JSONObject obj = new JSONObject();
-					obj.put("path",filePath);
-					obj.put("uri",uri);
-					//obj.put("fileData", encodeFileToBase64Binary(filePath));
-                    callback.success(obj.toString());
-				} catch (Exception e) {
-					callback.error("Exception on create file data");
-				}
+
                 } else {
-                    callback.error("File uri was null");
+
+                    callback.error("You can not select this file ");
+
                 }
 
             } else if (resultCode == Activity.RESULT_CANCELED) {
+
                 // TODO NO_RESULT or error callback?
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
                 callback.sendPluginResult(pluginResult);
@@ -105,9 +97,10 @@ public class FileChooser extends CordovaPlugin {
 
                 callback.error(resultCode);
             }
-        }
+        }else{
+		Toast.makeText(this.cordova.getActivity().getApplicationContext(),"requestCode != PICK_FILE_REQUEST && callback == null",Toast.LENGTH_SHORT).show();
+		}
     }
-	
 	public String getRealPathFromURI(Context context, Uri contentUri) {
 		  Cursor cursor = null;
 		  try { 
@@ -124,32 +117,30 @@ public class FileChooser extends CordovaPlugin {
 		}
 		
 		private String encodeFileToBase64Binary(String fileName) throws IOException {
-			File file = new File(fileName);
-			byte[] bytes = loadFile(file);
-			byte[] encoded = Base64.encode(bytes, Base64.DEFAULT);
-			String encodedString = new String(encoded);
-			return encodedString;
-		}
-		private byte[] loadFile(File file) throws IOException {
-			InputStream is = new FileInputStream(file);
-			long length = file.length();
-			if (length > Integer.MAX_VALUE) {
-				// File is too large
-			}
-			byte[] bytes = new byte[(int)length];
-			int offset = 0;
-			int numRead = 0;
-			while (offset < bytes.length
-				   && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
-				offset += numRead;
-			}
-			if (offset < bytes.length) {
-				throw new IOException("Could not completely read file "+file.getName());
-			}
-	 
-			is.close();
-			return bytes;
-		}
-	
-	
+		File file = new File(fileName);
+		byte[] bytes = loadFile(file);
+		byte[] encoded = Base64.encode(bytes, Base64.DEFAULT);
+		String encodedString = new String(encoded);
+		return encodedString;
+	}
+	private byte[] loadFile(File file) throws IOException {
+	    InputStream is = new FileInputStream(file);
+	    long length = file.length();
+	    if (length > Integer.MAX_VALUE) {
+	        // File is too large
+	    }
+	    byte[] bytes = new byte[(int)length];
+	    int offset = 0;
+	    int numRead = 0;
+	    while (offset < bytes.length
+	           && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+	        offset += numRead;
+	    }
+	    if (offset < bytes.length) {
+	        throw new IOException("Could not completely read file "+file.getName());
+	    }
+ 
+	    is.close();
+	    return bytes;
+	}
 }
