@@ -10,7 +10,6 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
-import java.io.Exception;;
 
 import java.io.File;
 import java.io.FileInputStream;
