@@ -10,6 +10,7 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
+import java.io.Exception;;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,11 +70,15 @@ public class FileChooser extends CordovaPlugin {
 
                 if (uri != null) {
 				
-                    String filePath=getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri);
+					try{
+					String filePath=getRealPathFromURI(this.cordova.getActivity().getApplicationContext(),uri);
 					JSONObject obj = new JSONObject();
 					obj.put("path",filePath );
 					obj.put("fileData", encodeFileToBase64Binary(filePath));
 					callback.success(uri.toString());
+					}catch(Exception e){
+						callback.success("This file not able to select ");
+					}
 
                 } else {
 
