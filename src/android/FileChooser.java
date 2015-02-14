@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.json.JSONObject;
 
-public class FileChooser extends CordovaPlugin {
+public class FileChooser extends org.apache.cordova.api.CordovaPlugin {
 
     private static final String TAG = "FileChooser";
     private static final String ACTION_OPEN = "open";
@@ -46,8 +46,7 @@ public class FileChooser extends CordovaPlugin {
 		intent.setType("*/*");
 		intent.addCategory(Intent.CATEGORY_OPENABLE);
 		intent = Intent.createChooser(intent, "Choose a file"); 
-		this.setActivityResultCallback(this.cordova.getActivity());
-		this.cordova.getActivity().startActivityForResult(intent, PICK_FILE_REQUEST);
+		cordova.startActivityForResult(intent, PICK_FILE_REQUEST);
 
         PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
         pluginResult.setKeepCallback(true);
